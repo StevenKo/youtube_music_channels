@@ -1,6 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_settings"
+    <!-- <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="100"
-        android:showAsAction="never" />
+        android:showAsAction="never" /> -->
+    <!-- icon -->
+	<item android:id="@+id/menu_refresh" android:showAsAction="never"
+		android:title="@string/action_label_refresh" android:icon="@drawable/ic_menu_refresh_holo_light" />
+	
+	<item android:id="@+id/menu_recommand" android:showAsAction="never"
+		android:title="@string/action_label_recommand" />
+	
+	<item android:id="@+id/menu_contact" android:showAsAction="never"
+		android:title="@string/action_label_contact" />
 </menu>
