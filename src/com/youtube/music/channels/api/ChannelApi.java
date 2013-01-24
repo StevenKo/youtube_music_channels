@@ -163,7 +163,7 @@ public class ChannelApi {
 
     }
 
-    public static ArrayList<Channel> getPromotionNews(int area) {
+    public static ArrayList<Channel> getChannels(int area) {
         ArrayList<Channel> channels = new ArrayList();
         String message = getMessageFromServer("GET", "/api/v1/channels.json?area_id=" + area, null, null);
         if (message == null) {
@@ -175,8 +175,10 @@ public class ChannelApi {
                 for (int i = 0; i < newsArray.length(); i++) {
                     String name = newsArray.getJSONObject(i).getString("name");
                     String link = newsArray.getJSONObject(i).getString("link");
+                    int id = newsArray.getJSONObject(i).getInt("id");
+                    String thumbnail = newsArray.getJSONObject(i).getString("thumbnail");
 
-                    Channel n = new Channel("", "");
+                    Channel n = new Channel(name, link, id, thumbnail);
                     channels.add(n);
                 }
 
