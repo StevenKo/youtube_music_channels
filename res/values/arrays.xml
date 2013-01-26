@@ -21,6 +21,7 @@
         <item>Japanese</item>
         <item>Korean</item>
         <item>Others</item>
-        <item>My Favorites</item>
+        <item>My Channels</item>
+        <item>My Videos</item>
     </string-array>
 </resources>
