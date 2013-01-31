@@ -59,24 +59,25 @@ public class ListVideoAdapter extends BaseAdapter {
         TextView textLikes = (TextView) vi.findViewById(R.id.text_list_like);
         
         
+        
 //        String countString = Integer.toString(data.get(position).getViewCount());
         int views = data.get(position).getViewCount();
-        textViews.setText(NumberFormat.getNumberInstance(Locale.US).format(views)+" Views");
+        textViews.setText(NumberFormat.getNumberInstance(Locale.US).format(views)+" "+activity.getResources().getString(R.string.views));
         
         int[] intTime = splitToComponentTimes(data.get(position).getDuration());
         if(intTime[0]!=0){
-        	textDuration.setText("Time:"+Integer.toString(intTime[0])+":"+Integer.toString(intTime[1])+":"+Integer.toString(intTime[2]));
+        	textDuration.setText(activity.getResources().getString(R.string.time)+":"+Integer.toString(intTime[0])+":"+Integer.toString(intTime[1])+":"+Integer.toString(intTime[2]));
         }else{
-        	textDuration.setText("Time:"+Integer.toString(intTime[1])+":"+Integer.toString(intTime[2]));
+        	textDuration.setText(activity.getResources().getString(R.string.time)+":"+Integer.toString(intTime[1])+":"+Integer.toString(intTime[2]));
         }
         
-        textLikes.setText(Integer.toString(data.get(position).getLikes())+" Likes");
+        textLikes.setText(Integer.toString(data.get(position).getLikes())+" "+activity.getResources().getString(R.string.likes));
         
         text.setText(data.get(position).getTitle());
         
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");  
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");  
         String dateString = formatter.format(data.get(position).getUploadDate()); 
-        textDate.setText(dateString);
+        textDate.setText(activity.getResources().getString(R.string.launch)+": "+dateString);
         
         if(data.get(position).getThumbnail().equals("") || data.get(position).getThumbnail() == null){
         	image.setImageResource(R.drawable.app_icon);

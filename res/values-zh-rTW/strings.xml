@@ -7,10 +7,10 @@
     <string name="app_name">Music Channel</string>
     
     <!-- Used in Code -->
-    <string name="likes">Likes</string>
-    <string name="time">Time</string>
-    <string name="views">Views</string>
-    <string name="launch">Launch</string>
+    <string name="likes">喜歡</string>
+    <string name="time">長度</string>
+    <string name="views">觀看次數</string>
+    <string name="launch">發佈時間</string>
     
     
     
