@@ -1,5 +1,6 @@
 package com.taiwan.imageload;
 
+import static android.provider.BaseColumns._ID;
 import static com.youtube.music.sqlite.DbMyVideoConstants.*;
 
 import java.math.BigDecimal;
@@ -33,17 +34,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ListVideoAdapter extends BaseAdapter {
+public class ListMyVideoAdapter extends BaseAdapter {
 
 	private DBMyVideoHelper myVideoDBHelper;
     private final Activity        activity;
-    private final ArrayList<YoutubeVideo> data;
+    private final ArrayList<MyYoutubeVideo> data;
     private final ArrayList<MyYoutubeVideo> mVideos;
     private static LayoutInflater inflater = null;
     public ImageLoader            imageLoader;
     private int mChannelInt;
 
-    public ListVideoAdapter(Activity a, ArrayList<YoutubeVideo> d, ArrayList<MyYoutubeVideo> myVideo, int channelInt) {
+    public ListMyVideoAdapter(Activity a, ArrayList<MyYoutubeVideo> d, ArrayList<MyYoutubeVideo> myVideo, int channelInt) {
         activity = a;
         data = d;
         mVideos = myVideo;
@@ -117,8 +118,9 @@ public class ListVideoAdapter extends BaseAdapter {
         
         text.setText(data.get(position).getTitle());
         
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");  
-        final String dateString = formatter.format(data.get(position).getUploadDate()); 
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");  
+//        final String dateString = formatter.format(data.get(position).getUploadDate()); 
+        final String dateString = data.get(position).getUploadDate();
         textDate.setText(activity.getResources().getString(R.string.launch)+": "+dateString);
         
         if(data.get(position).getThumbnail().equals("") || data.get(position).getThumbnail() == null){
@@ -128,8 +130,9 @@ public class ListVideoAdapter extends BaseAdapter {
         }
         
         // setCheckBox
-        final CheckBox checkBox = (CheckBox) vi.findViewById(R.id.checkbox_video);
+        final CheckBox checkBox = (CheckBox) vi.findViewById(R.id.checkbox_video);    
         MyYoutubeVideo theVideo = new MyYoutubeVideo();
+        
 	    if(mVideos!= null){
 	        for(int i=0; i<mVideos.size(); i++){
 	        	
@@ -162,7 +165,7 @@ public class ListVideoAdapter extends BaseAdapter {
                 	values.put(VIDEO_LINK, data.get(position).getLink());
                 	values.put(VIDEO_THUMBNAIL, data.get(position).getThumbnail());
                 	values.put(VIDEO_UPLOADTIME, dateString);
-                	values.put(VIDEO_VIEWCOUNT, data.get(position).getViewCount());
+                	values.put(VIDEO_VIEWCOUNT, data.get(position).getLink());
                 	values.put(VIDEO_DURATION, data.get(position).getDuration());
                 	values.put(VIDEO_LIKES, data.get(position).getLikes());
                 	values.put(VIDEO_DISLIKES, data.get(position).getDislikes());

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.taiwan.imageload.ListChannelAdapter;
 import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
+import com.youtube.music.channels.entity.MyYoutubeVideo;
 import com.youtube.music.channels.entity.YoutubeVideo;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -22,6 +23,8 @@ public class PopularListFragment extends ListFragment {
   private static ArrayList<YoutubeVideo> videos = new ArrayList<YoutubeVideo>();
   private static String myChannelName;
   private static int myPage;
+  private static ArrayList<MyYoutubeVideo> myVideos;
+  private static int channelInt;
 
   
   @Override
@@ -32,11 +35,12 @@ public class PopularListFragment extends ListFragment {
     
   }
   
-  public static ListFragment newInstance(String channelName, int page) {     
+  public static ListFragment newInstance(String channelName, int page, ArrayList<MyYoutubeVideo> mVideo, int channelId) {     
 	 
 	  myChannelName = channelName;
 	  myPage = page;
-	  
+	  myVideos = mVideo;
+	  channelInt = channelId;
 	  PopularListFragment fragment = new PopularListFragment();
 	    
       return fragment;
@@ -74,8 +78,10 @@ public class PopularListFragment extends ListFragment {
           super.onPostExecute(result);
 
           if(videos!=null){
-	          ListVideoAdapter myListAdapter = new ListVideoAdapter(getActivity(), videos);
-	          setListAdapter(myListAdapter);
+        	  try{
+		          ListVideoAdapter myListAdapter = new ListVideoAdapter(getActivity(), videos, myVideos, channelInt);
+		          setListAdapter(myListAdapter);
+        	  }catch(Exception e){}
           }
 
       }

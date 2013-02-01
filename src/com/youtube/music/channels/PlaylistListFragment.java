@@ -76,8 +76,12 @@ public class PlaylistListFragment extends ListFragment {
           super.onPostExecute(result);
 
           if(playlists != null){
-	          ListPlaylistAdapter myListAdapter = new ListPlaylistAdapter(getActivity(), playlists);
-	          setListAdapter(myListAdapter);
+        	  try{
+		          ListPlaylistAdapter myListAdapter = new ListPlaylistAdapter(getActivity(), playlists);
+		          setListAdapter(myListAdapter);
+        	  }catch(Exception e){
+        		  
+        	  }
           }
 
       }

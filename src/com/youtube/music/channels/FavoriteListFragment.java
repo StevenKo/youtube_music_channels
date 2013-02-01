@@ -4,8 +4,10 @@ package com.youtube.music.channels;
 import java.util.ArrayList;
 
 import com.taiwan.imageload.ListChannelAdapter;
+import com.taiwan.imageload.ListMyVideoAdapter;
 import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
+import com.youtube.music.channels.entity.MyYoutubeVideo;
 import com.youtube.music.channels.entity.YoutubeVideo;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -19,9 +21,9 @@ import android.widget.ListView;
 
 public class FavoriteListFragment extends ListFragment {
 
-  private static ArrayList<YoutubeVideo> videos = new ArrayList<YoutubeVideo>();
-  private static String myChannelName;
-  private static int myPage;
+  private static ArrayList<MyYoutubeVideo> myVideos = new ArrayList<MyYoutubeVideo>();
+  private static int channelId;
+ 
 
   
   @Override
@@ -32,10 +34,10 @@ public class FavoriteListFragment extends ListFragment {
     
   }
   
-  public static ListFragment newInstance(String channelName, int page) {     
+  public static ListFragment newInstance(int mchannelId, ArrayList<MyYoutubeVideo> mVideos ) {     
 	 
-	  myChannelName = channelName;
-	  myPage = page;
+	  channelId = mchannelId;
+	  myVideos = mVideos;
 	  
 	  FavoriteListFragment fragment = new FavoriteListFragment();
 	    
@@ -62,7 +64,7 @@ public class FavoriteListFragment extends ListFragment {
       protected Object doInBackground(Object... params) {
           // TODO Auto-generated method stub
 
-    	  videos = ChannelApi.getChannelVideo(myChannelName, myPage, "");     
+//    	  videos = ChannelApi.getChannelVideo(myChannelName, myPage, "");     
 
           return null;
       }
@@ -70,10 +72,18 @@ public class FavoriteListFragment extends ListFragment {
       @Override
       protected void onPostExecute(Object result) {
           // TODO Auto-generated method stub
-          super.onPostExecute(result);
+          super.onPostExecute(result);        
           
-          if(videos != null){
-	          ListVideoAdapter myListAdapter = new ListVideoAdapter(getActivity(), videos);
+          if(myVideos != null){
+        	  
+        	  ArrayList<MyYoutubeVideo> myChannelVideo = new ArrayList<MyYoutubeVideo>();
+              for(int i=0; i<myVideos.size();i++){
+            	  if(myVideos.get(i).getChannelInt()==channelId){
+            		  myChannelVideo.add(myVideos.get(i));
+            	  }
+              }
+        	  
+	          ListMyVideoAdapter myListAdapter = new ListMyVideoAdapter(getActivity(), myChannelVideo,myChannelVideo,channelId);
 	          setListAdapter(myListAdapter);
           }
 

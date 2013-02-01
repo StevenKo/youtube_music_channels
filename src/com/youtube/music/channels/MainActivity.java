@@ -1,5 +1,13 @@
 package com.youtube.music.channels;
 
+import static android.provider.BaseColumns._ID;
+import static com.youtube.music.sqlite.DbMyChannelConstants.NAME;
+import static com.youtube.music.sqlite.DbMyChannelConstants.LINK;
+import static com.youtube.music.sqlite.DbMyChannelConstants.ID;
+import static com.youtube.music.sqlite.DbMyChannelConstants.THUMBNAIL;
+import static com.youtube.music.sqlite.DbMyChannelConstants.TABLE_NAME;
+import static com.youtube.music.sqlite.DbMyVideoConstants.*;
+
 import java.util.ArrayList;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -8,12 +16,20 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.taiwan.imageload.ListChannelAdapter;
+import com.taiwan.imageload.ListMyVideoAdapter;
+import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
 import com.youtube.music.channels.entity.Channel;
+import com.youtube.music.channels.entity.MyYoutubeVideo;
+import com.youtube.music.channels.entity.YoutubeVideo;
 import com.youtube.music.channels.VideosActivity;
+import com.youtube.music.sqlite.DBMyChannelHelper;
+import com.youtube.music.sqlite.DBMyVideoHelper;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -26,8 +42,12 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends SherlockActivity {
 	
+	private DBMyVideoHelper mDbVideoHelper;
+	private DBMyChannelHelper mDbChannelHelper;
 	private int channelArea;
-	private ArrayList<Channel> theChannels;
+	private ArrayList<Channel> theChannels = new ArrayList<Channel>();
+	private ArrayList<Channel> myChannels = new ArrayList<Channel>();
+	private ArrayList<MyYoutubeVideo> myVideos = new ArrayList<MyYoutubeVideo>();
 	private ListView myList;
 	private ListChannelAdapter myListAdapter;
 	private ProgressDialog  progressDialog   = null;
@@ -38,8 +58,13 @@ public class MainActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        openDatabase();
+        getMyChannles();
+        
+        
+        
         final ActionBar ab = getSupportActionBar();
-     // set up list nav
+        // set up list nav
         ab.setListNavigationCallbacks(ArrayAdapter
                 .createFromResource(this, R.array.sections,
                         R.layout.sherlock_spinner_dropdown_item),
@@ -64,16 +89,24 @@ public class MainActivity extends SherlockActivity {
 	                         channelArea = 4;
 	                         new DownloadChannelsTask().execute();
                        	 break;
-//                        case 4: //others                 
-//                       	 break;
-                        case 4: //My Channels                       
+                        case 4: //My Channels
+                        	myChannels.clear();
+                        	getMyChannles();
+                        	setListUI(myChannels);
                        	 break;
-                        case 5: //My Videos                       
+                        case 5: //My Videos
+                        	myVideos.clear();
+                        	getMyVideos();
+                        	setListVideo(myVideos);                     	
                           	 break;
                        }
                                     
                     	return false;
                 }
+
+
+
+										
          });
         
         if (ab.getNavigationMode() != ActionBar.NAVIGATION_MODE_LIST) {
@@ -87,7 +120,70 @@ public class MainActivity extends SherlockActivity {
     }
     
 
+    
     @Override
+	protected void onDestroy() {
+		super.onDestroy();
+		closeDatabase();
+	}
+	
+    
+	private void openDatabase() {
+		// TODO Auto-generated method stub
+    	mDbChannelHelper = new DBMyChannelHelper(this);
+    	mDbVideoHelper = new DBMyVideoHelper(this);
+	}
+	private void closeDatabase(){
+		mDbChannelHelper.close();
+		mDbVideoHelper.close();
+	}
+	
+	private void getMyChannles() {
+		// TODO Auto-generated method stub
+		Cursor cursor = getCursor();
+		while(cursor.moveToNext()){
+//    		int id = cursor.getInt(0);
+    		String name = cursor.getString(1);
+    		String link = cursor.getString(2);
+    		String  id= cursor.getString(3);
+    		String  thumbNail= cursor.getString(4);
+    		Channel aChannel = new Channel(name, link, Integer.valueOf(id), thumbNail);
+    		myChannels.add(aChannel);   		
+    	}
+	}
+	
+	
+//	public static final String VIDEO_BELONGO_CHANNEL = "belongchannel";
+//	public static final String VIDEO_TITLE = "title";
+//	public static final String VIDEO_LINK = "link";
+//	public static final String VIDEO_THUMBNAIL = "thumbnail";
+//	public static final String VIDEO_UPLOADTIME = "uploadtime";
+//	public static final String VIDEO_VIEWCOUNT = "view_count";
+//	public static final String VIDEO_DURATION = "duration";
+//	public static final String VIDEO_LIKES = "likes";
+//	public static final String VIDEO_DISLIKES = "dislikes";
+	
+	private void getMyVideos() {
+		// TODO Auto-generated method stub
+		Cursor cursor = getVideoCursor();
+		while(cursor.moveToNext()){
+    		int id = cursor.getInt(0);
+    		int belongchannel = cursor.getInt(1);
+    		String title = cursor.getString(2);
+    		String link= cursor.getString(3);
+    		String  thumbnail= cursor.getString(4);
+    		String uploadtime = cursor.getString(5);
+    		int view_count = cursor.getInt(6);
+    		int  duration= cursor.getInt(7);
+    		int likes = cursor.getInt(8);
+    		int dislikes = cursor.getInt(9);
+    		MyYoutubeVideo aVideo = new MyYoutubeVideo(id,belongchannel, title, link, thumbnail, uploadtime, view_count,  duration, likes, dislikes);
+    		myVideos.add(aVideo);   		
+    	}
+	}
+
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
@@ -143,33 +239,45 @@ public class MainActivity extends SherlockActivity {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
             progressDialog.dismiss();
-            setListUI();
+            setListUI(theChannels);
 
         }
     }
     
-    private void setListUI() {
+    private void setListUI(ArrayList<Channel> channels) {
 		// TODO Auto-generated method stub
     	 myList = (ListView) findViewById(R.id.main_listview);
-         myListAdapter = new ListChannelAdapter(this, theChannels);
+         myListAdapter = new ListChannelAdapter(this, channels, myChannels);
          myList.setAdapter(myListAdapter);
-         
-         myList.setOnItemClickListener(new OnItemClickListener() {
- 			@Override
- 			public void onItemClick(AdapterView<?> parent, View view,
- 					int position, long id) {
-
-	 				Intent intent = new Intent(MainActivity.this, VideosActivity.class);
-	 				Bundle bundle = new Bundle();
-	 				bundle.putInt("ChannelId", theChannels.get(position).getId()); 
-	 				bundle.putString("ChannelName", theChannels.get(position).getName());
-	 				bundle.putString("ChannelLink", theChannels.get(position).getLink());
-	 				intent.putExtras(bundle);
-	   				startActivity(intent);
- 		
-
- 			}
- 		});
+         myList.setItemsCanFocus(true);
+        
 	}
+    
+    private void setListVideo(ArrayList<MyYoutubeVideo> myVideos) {    	
+		ListMyVideoAdapter videoAdapter = new ListMyVideoAdapter(this, myVideos, myVideos, 0);
+		myList.setAdapter(videoAdapter);
+		myList.setItemsCanFocus(true);
+		
+	}
+    
+    private Cursor getCursor(){
+    	SQLiteDatabase db = mDbChannelHelper.getReadableDatabase();
+    	String[] columns = {_ID, NAME, LINK, ID, THUMBNAIL};
+    	
+    	Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null);
+    	startManagingCursor(cursor);
+    	
+    	return cursor;
+    }
+    
+    private Cursor getVideoCursor(){
+    	SQLiteDatabase db = mDbVideoHelper.getReadableDatabase();
+    	String[] columns = {_ID, VIDEO_BELONGO_CHANNEL, VIDEO_TITLE, VIDEO_LINK, VIDEO_THUMBNAIL,VIDEO_UPLOADTIME,VIDEO_VIEWCOUNT, VIDEO_DURATION, VIDEO_LIKES, VIDEO_DISLIKES};
+    	
+    	Cursor cursor = db.query(VIDEO_TABLE_NAME, columns, null, null, null, null, null);
+    	startManagingCursor(cursor);
+    	
+    	return cursor;
+    }
     
 }

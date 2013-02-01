@@ -25,7 +25,7 @@
             android:orientation="horizontal"
              >
              <CheckBox
-			    android:id="@+id/checkBox1"
+			    android:id="@+id/checkbox_video"
 			    android:layout_width="35dp"
 			    android:layout_height="35dp"
 			    style="?android:attr/starStyle"

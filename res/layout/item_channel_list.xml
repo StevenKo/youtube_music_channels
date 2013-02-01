@@ -12,10 +12,10 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         />
-    <LinearLayout
+    <!-- <LinearLayout
         android:layout_width="fill_parent"
 		android:layout_height="90dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
          >
@@ -26,12 +26,49 @@
 		  android:gravity="center_vertical"
 		  android:textSize="20dip"
 		  android:layout_marginLeft="10dp" 
-		  android:layout_marginRight="10dp"
+		  android:layout_marginRight="45dp"
 		  android:text="text1"
 		  android:lines="3"
 		  android:ellipsize="end"
 		  android:textColor="#383938"
 		  />
-    </LinearLayout>
+	    <CheckBox
+			    android:id="@+id/checkbox_channel"
+			    android:layout_width="35dp"
+			    android:layout_height="35dp"
+			    style="?android:attr/starStyle"
+			    android:layout_centerVertical="true"
+			    android:layout_marginLeft="-45dp"
+				/>
+    </LinearLayout> -->
+    
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"
+            android:orientation="horizontal"
+             >
+             <CheckBox
+			    android:id="@+id/checkbox_channel"
+			    android:layout_width="35dp"
+			    android:layout_height="35dp"
+			    style="?android:attr/starStyle"
+			    android:layout_alignParentRight="true"
+			    android:layout_centerVertical="true"
+			    android:layout_marginRight="10dp"
+				/>
+		    <TextView
+		  	  android:id="@+id/text_channel_list"
+		  	  android:layout_width="fill_parent"
+			  android:layout_height="90dp"
+			  android:gravity="center_vertical" 
+			  android:textSize="20dip" 
+			  android:layout_marginLeft="10dp"
+			  android:layout_marginRight="45dp"
+			  android:text="text1"
+			  android:lines="3"
+			  android:ellipsize="end"
+			  android:textColor="#383938"
+			  />	    
+	</RelativeLayout>
     
 </LinearLayout>
