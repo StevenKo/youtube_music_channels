@@ -4,6 +4,7 @@ package com.youtube.music.channels;
 import java.util.ArrayList;
 
 import com.taiwan.imageload.ListChannelAdapter;
+import com.taiwan.imageload.ListNothingAdapter;
 import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
 import com.youtube.music.channels.entity.MyYoutubeVideo;
@@ -82,6 +83,9 @@ public class PopularListFragment extends ListFragment {
 		          ListVideoAdapter myListAdapter = new ListVideoAdapter(getActivity(), videos, myVideos, channelInt);
 		          setListAdapter(myListAdapter);
         	  }catch(Exception e){}
+          }else{
+        	  ListNothingAdapter nothingAdapter = new ListNothingAdapter(getActivity());
+    		  setListAdapter(nothingAdapter);
           }
 
       }

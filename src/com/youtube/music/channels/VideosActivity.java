@@ -19,6 +19,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -119,28 +120,32 @@ public class VideosActivity extends SherlockFragmentActivity {
         }
 
         @Override
-        public ListFragment getItem(int position) {
+        public Fragment getItem(int position) {
 //            return TestFragment.newInstance(CONTENT[position % CONTENT.length]);
         	
-        	ListFragment kk = new ListFragment();
+        	Fragment kk = new Fragment();
+        	
+        	
         	
         	if(position==0){
         		myVideos.clear();
-        		getMyVideos();
-        		kk = NewsListFragment.newInstance(channelLink, 0, myVideos, channelId);
+            	getMyVideos();
+            	kk = NewsFragment.newInstance(channelLink, 0, myVideos, channelId);
         	}else if(position == 1){
         		myVideos.clear();
         		getMyVideos();
-        		kk = PopularListFragment.newInstance(channelLink, 0, myVideos, channelId);
+        		kk = PopularFragment.newInstance(channelLink, 0, myVideos, channelId);
         	}else if(position == 2){
-        		kk = PlaylistListFragment.newInstance(channelLink, 0);
-        	}else if(position == 3){
+        		kk = PlaylistFragment.newInstance(channelLink, 0);
+        	}
+        	else if(position == 3){
         		myVideos.clear();
         		getMyVideos();
         		kk = FavoriteListFragment.newInstance(channelId, myVideos);
         	}
             return kk;
         }
+       
 
         @Override
         public CharSequence getPageTitle(int position) {

@@ -2,8 +2,10 @@ package com.youtube.music.channels;
 
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 import com.taiwan.imageload.ListChannelAdapter;
+import com.taiwan.imageload.ListNothingAdapter;
 import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
 import com.youtube.music.channels.entity.MyYoutubeVideo;
@@ -12,6 +14,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -25,14 +28,15 @@ public class NewsListFragment extends ListFragment {
   private static int myPage;
   private static ArrayList<MyYoutubeVideo> myVideos;
   private static int channelInt;
-
+ 
   
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     
+ 
     new DownloadChannelsTask().execute();
-    
+   
   }
   
   public static ListFragment newInstance(String channelName, int page, ArrayList<MyYoutubeVideo> mVideo, int channelId) {     
@@ -80,7 +84,12 @@ public class NewsListFragment extends ListFragment {
         	  try{
 		          ListVideoAdapter myListAdapter = new ListVideoAdapter(getActivity(), videos, myVideos, channelInt);
 		          setListAdapter(myListAdapter);
-        	  }catch(Exception e){}
+        	  }catch(Exception e){
+        		 
+        	  }
+          }else{
+        	  ListNothingAdapter nothingAdapter = new ListNothingAdapter(getActivity());
+    		  setListAdapter(nothingAdapter);
           }
 
       }

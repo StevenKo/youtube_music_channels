@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.taiwan.imageload.ListChannelAdapter;
 import com.taiwan.imageload.ListMyVideoAdapter;
+import com.taiwan.imageload.ListNothingAdapter;
 import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
 import com.youtube.music.channels.entity.MyYoutubeVideo;
@@ -77,14 +78,20 @@ public class FavoriteListFragment extends ListFragment {
           if(myVideos != null){
         	  
         	  ArrayList<MyYoutubeVideo> myChannelVideo = new ArrayList<MyYoutubeVideo>();
-              for(int i=0; i<myVideos.size();i++){
+              for(int i=myVideos.size()-1; i>-1;i--){
             	  if(myVideos.get(i).getChannelInt()==channelId){
             		  myChannelVideo.add(myVideos.get(i));
             	  }
               }
         	  
-	          ListMyVideoAdapter myListAdapter = new ListMyVideoAdapter(getActivity(), myChannelVideo,myChannelVideo,channelId);
-	          setListAdapter(myListAdapter);
+              if(myChannelVideo.size()!=0){
+            	  ListMyVideoAdapter myListAdapter = new ListMyVideoAdapter(getActivity(), myChannelVideo,myChannelVideo,channelId);
+    	          setListAdapter(myListAdapter);        	  
+              }else{
+            	  ListNothingAdapter nothingAdapter = new ListNothingAdapter(getActivity());
+        		  setListAdapter(nothingAdapter);
+              }            
+	          
           }
 
       }

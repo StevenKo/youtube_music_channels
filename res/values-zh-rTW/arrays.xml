@@ -17,8 +17,8 @@
 <resources>
     <string-array name="sections">
         <item>華文</item>
-        <item>韓文</item>
         <item>日文</item>
+        <item>韓文</item>
         <item>西洋</item>
         <item>我的頻道</item>
         <item>我的影片</item>
