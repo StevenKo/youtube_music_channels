@@ -8,8 +8,20 @@ import static com.youtube.music.sqlite.DbMyChannelConstants.THUMBNAIL;
 import static com.youtube.music.sqlite.DbMyChannelConstants.TABLE_NAME;
 import static com.youtube.music.sqlite.DbMyVideoConstants.*;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -39,15 +51,18 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends SherlockActivity {
 	
@@ -68,6 +83,11 @@ public class MainActivity extends SherlockActivity {
 //	private SharedPreferences prefs;
 //	private AlertDialog.Builder rattingDialog;
 //	private int openTimes;
+	private String extStorageDirectory;
+	private Boolean isFileExist = true;
+	String channel_URL="https://docs.google.com/spreadsheet/pub?key=0Ajs1n6DE4vP1dGpxWDlQcTNqWVROU0FnTWxzdmRjUUE&output=csv";
+	String channel_name="channels.csv";
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +99,7 @@ public class MainActivity extends SherlockActivity {
 //		if(openTimes!=999){
 //			openTimes = openTimes +1;
 //		}
+        extStorageDirectory = Environment.getExternalStorageDirectory().toString();
         
         systemLanguage = Locale.getDefault().getDisplayLanguage();
         
@@ -102,7 +123,12 @@ public class MainActivity extends SherlockActivity {
 	                         myChannels.clear();
 	                         getMyChannles();
 	                         if(isOnline()){
-	                        	 new DownloadChannelsTask().execute();
+	                        	 setChannels(channel_name, channelArea);
+	                        	 if(!isFileExist){
+	                        		 new DownloadChannelsTask().execute();
+	                        	 }else{
+	                        		 setListUI(theChannels);
+	                        	 }
 	                         }else{
 	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
 	                         }
@@ -112,7 +138,12 @@ public class MainActivity extends SherlockActivity {
 	                         myChannels.clear();
 	                         getMyChannles();
 	                         if(isOnline()){
-	                        	 new DownloadChannelsTask().execute();
+	                        	 setChannels(channel_name, channelArea);
+	                        	 if(!isFileExist){
+	                        		 new DownloadChannelsTask().execute();
+	                        	 }else{
+	                        		 setListUI(theChannels);
+	                        	 }
 	                         }else{
 	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
 	                         }
@@ -122,7 +153,12 @@ public class MainActivity extends SherlockActivity {
 	                         myChannels.clear();
 	                         getMyChannles();
 	                         if(isOnline()){
-	                        	 new DownloadChannelsTask().execute();
+	                        	 setChannels(channel_name, channelArea);
+	                        	 if(!isFileExist){
+	                        		 new DownloadChannelsTask().execute();
+	                        	 }else{
+	                        		 setListUI(theChannels);
+	                        	 }
 	                         }else{
 	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
 	                         }
@@ -132,7 +168,12 @@ public class MainActivity extends SherlockActivity {
 	                         myChannels.clear();
 	                         getMyChannles();
 	                         if(isOnline()){
-	                        	 new DownloadChannelsTask().execute();
+	                        	 setChannels(channel_name, channelArea);
+	                        	 if(!isFileExist){
+	                        		 new DownloadChannelsTask().execute();
+	                        	 }else{
+	                        		 setListUI(theChannels);
+	                        	 }
 	                         }else{
 	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show(); 
 	                         }
@@ -242,7 +283,7 @@ public class MainActivity extends SherlockActivity {
 			String link = cursor.getString(2);
 			String  id= cursor.getString(3);
 			String  thumbNail= cursor.getString(4);
-			Channel aChannel = new Channel(name, link, Integer.valueOf(id), thumbNail);
+			Channel aChannel = new Channel(name, link, Integer.valueOf(id), thumbNail,0);
 			myChannels.add(aChannel);
 			
 			while(cursor.moveToPrevious()){
@@ -251,7 +292,7 @@ public class MainActivity extends SherlockActivity {
 	    		link = cursor.getString(2);
 	    	    id= cursor.getString(3);
 	    	    thumbNail= cursor.getString(4);
-	    		aChannel = new Channel(name, link, Integer.valueOf(id), thumbNail);
+	    		aChannel = new Channel(name, link, Integer.valueOf(id), thumbNail,0);
 	    		myChannels.add(aChannel);   		
 	    	}
 		}catch(Exception e){}
@@ -438,6 +479,9 @@ public class MainActivity extends SherlockActivity {
 	    return true;
 	}
     
+    // Use Google SpreadSheet
+    
+    
     private class DownloadChannelsTask extends AsyncTask {
 
         @Override
@@ -451,27 +495,111 @@ public class MainActivity extends SherlockActivity {
         }
 
         @Override
-        protected Object doInBackground(Object... params) {
-            // TODO Auto-generated method stub
-
-        	theChannels = ChannelApi.getChannels(channelArea);       
-  
-            return null;
-        }
+		protected Object doInBackground(Object... params) {
+			// TODO Auto-generated method stub								
+			File Directory = new File(extStorageDirectory+"/Android_Music_Channel/");
+			Directory.mkdirs();
+			File file = new File(Directory, channel_name);
+			try {
+				URL url = new URL(channel_URL);
+				URLConnection connection = url.openConnection();
+				connection.connect();
+				InputStream input = new BufferedInputStream(url.openStream());
+//				OutputStream output = new FileOutputStream("/sdcard/file_name.extension");
+				OutputStream output = new FileOutputStream(file);
+				byte data[] = new byte[1];
+				while ((input.read(data)) != -1) {
+	               
+	                output.write(data);
+	            }			
+				output.flush();
+	            output.close();
+	            input.close();
+			}catch (Exception e) {
+				e.toString();
+	        }
+			
+			return null;
+		}
 
         @Override
         protected void onPostExecute(Object result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
             progressDialog.dismiss();
+            setChannels(channel_name, channelArea);
             if(theChannels!=null){
-             setListUI(theChannels);
+            	setListUI(theChannels);
             }else{
             	Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
             }
 
         }
     }
+    
+    private void setChannels(String file, int area_id) {
+		// TODO Auto-generated method stub
+		try {
+			theChannels.clear();
+		 	//read the file and save to Array
+	    	String strFile =  extStorageDirectory +"/Android_Music_Channel/"+file;
+			BufferedReader reader = new BufferedReader( new FileReader(strFile));
+			LineNumberReader lineReader = new LineNumberReader(reader);
+	        String line;
+	        while ((line = lineReader.readLine()) != null) {
+	        	if(lineReader.getLineNumber()!=1){
+	        		String[] RowData = parseCsvLine(line.toString());
+	        		if(RowData.length == 5){
+	        			//Rowdata: id, area_id, name, link_name, thumbnail
+	        			//Channel: String name, String link, int id, String thumbnail, int area_id
+	        			Channel aChannel = new Channel(RowData[2], RowData[3], Integer.valueOf(RowData[0]), RowData[4],Integer.valueOf(RowData[1]));
+	        			if(aChannel.getAreaId()==area_id){
+	        				theChannels.add(aChannel);
+	        			}
+	        		}
+	        	}	        	
+	        }
+	        isFileExist = true;
+		}catch (IOException ex) {
+			 isFileExist = false;
+//			 Toast.makeText(MainActivity.this, "找不到資料",Toast.LENGTH_SHORT).show();
+		}		
+	}
+    
+//    private class DownloadChannelsTask extends AsyncTask {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // TODO Auto-generated method stub
+//            super.onPreExecute();
+//            
+//            	progressDialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.downloading));
+//            	progressDialog.setCancelable(true);
+//
+//        }
+//
+//        @Override
+//        protected Object doInBackground(Object... params) {
+//            // TODO Auto-generated method stub
+//
+//        	theChannels = ChannelApi.getChannels(channelArea);       
+//  
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Object result) {
+//            // TODO Auto-generated method stub
+//            super.onPostExecute(result);
+//            progressDialog.dismiss();
+//            if(theChannels!=null){
+//             setListUI(theChannels);
+//            }else{
+//            	Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+//            }
+//
+//        }
+//    }
     
     private void setListUI(ArrayList<Channel> channels) {
 		// TODO Auto-generated method stub
@@ -550,5 +678,18 @@ public class MainActivity extends SherlockActivity {
 	    }
 	    return false;
 	}
+    
+    public static String[] parseCsvLine(String line) {
+        // Create a pattern to match breaks
+        Pattern p =
+            Pattern.compile(",(?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+        // Split input with the pattern
+        String[] fields = p.split(line);
+        for (int i = 0; i < fields.length; i++) {
+            // Get rid of residual double quotes
+            fields[i] = fields[i].replace("\"", "");
+        }
+        return fields;
+    }
     
 }

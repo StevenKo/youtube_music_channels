@@ -175,32 +175,32 @@ public class ChannelApi {
 
     }
 
-    public static ArrayList<Channel> getChannels(int area) {
-        ArrayList<Channel> channels = new ArrayList();
-        String message = getMessageFromServer("GET", "/api/v1/channels.json?area_id=" + area, null, null);
-        if (message == null) {
-            return null;
-        } else {
-            try {
-                JSONArray newsArray;
-                newsArray = new JSONArray(message.toString());
-                for (int i = 0; i < newsArray.length(); i++) {
-                    String name = newsArray.getJSONObject(i).getString("name");
-                    String link = newsArray.getJSONObject(i).getString("link");
-                    int id = newsArray.getJSONObject(i).getInt("id");
-                    String thumbnail = newsArray.getJSONObject(i).getString("thumbnail");
-
-                    Channel n = new Channel(name, link, id, thumbnail);
-                    channels.add(n);
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return channels;
-    }
+//    public static ArrayList<Channel> getChannels(int area) {
+//        ArrayList<Channel> channels = new ArrayList();
+//        String message = getMessageFromServer("GET", "/api/v1/channels.json?area_id=" + area, null, null);
+//        if (message == null) {
+//            return null;
+//        } else {
+//            try {
+//                JSONArray newsArray;
+//                newsArray = new JSONArray(message.toString());
+//                for (int i = 0; i < newsArray.length(); i++) {
+//                    String name = newsArray.getJSONObject(i).getString("name");
+//                    String link = newsArray.getJSONObject(i).getString("link");
+//                    int id = newsArray.getJSONObject(i).getInt("id");
+//                    String thumbnail = newsArray.getJSONObject(i).getString("thumbnail");
+//
+//                    Channel n = new Channel(name, link, id, thumbnail);
+//                    channels.add(n);
+//                }
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//                return null;
+//            }
+//        }
+//        return channels;
+//    }
 
     public static String getMessageFromServer(String requestMethod, String apiPath, JSONObject json, String apiUrl) {
         URL url;
