@@ -9,6 +9,10 @@ import com.taiwan.imageload.ListVideoAdapter;
 import com.youtube.music.channels.api.ChannelApi;
 import com.youtube.music.channels.entity.MyYoutubeVideo;
 import com.youtube.music.channels.entity.YoutubeVideo;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -160,4 +164,14 @@ public final class NewsFragment extends Fragment {
           	
         }
     }
+    
+//    public boolean isOnline() {
+//	    ConnectivityManager cm =
+//	        (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+//	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+//	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+//	        return true;
+//	    }
+//	    return false;
+//	}
 }

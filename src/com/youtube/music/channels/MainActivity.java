@@ -30,15 +30,22 @@ import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -58,11 +65,20 @@ public class MainActivity extends SherlockActivity {
 	private ArrayList<MyYoutubeVideo> searchVideoArray =  new ArrayList<MyYoutubeVideo>();
 	private AlertDialog.Builder finishDialog;
 	private String systemLanguage;
+//	private SharedPreferences prefs;
+//	private AlertDialog.Builder rattingDialog;
+//	private int openTimes;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+//        prefs = getSharedPreferences("pref", 0);
+//		openTimes = prefs.getInt("openTimes", 0);
+//		if(openTimes!=999){
+//			openTimes = openTimes +1;
+//		}
         
         systemLanguage = Locale.getDefault().getDisplayLanguage();
         
@@ -82,20 +98,44 @@ public class MainActivity extends SherlockActivity {
                     	
                     	switch(itemPosition){
                         case 0: //Chinese
-	                         channelArea = 1; 
-	                         new DownloadChannelsTask().execute();
+	                         channelArea = 1;
+	                         myChannels.clear();
+	                         getMyChannles();
+	                         if(isOnline()){
+	                        	 new DownloadChannelsTask().execute();
+	                         }else{
+	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+	                         }
                        	 break;
                         case 1: //Japanese
 	                         channelArea = 2;
-	                         new DownloadChannelsTask().execute();
+	                         myChannels.clear();
+	                         getMyChannles();
+	                         if(isOnline()){
+	                        	 new DownloadChannelsTask().execute();
+	                         }else{
+	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+	                         }
                        	 break;
                         case 2: //Korean
 	                         channelArea = 3;
-	                         new DownloadChannelsTask().execute();
+	                         myChannels.clear();
+	                         getMyChannles();
+	                         if(isOnline()){
+	                        	 new DownloadChannelsTask().execute();
+	                         }else{
+	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+	                         }
                        	 break;
                         case 3: //English
 	                         channelArea = 4;
-	                         new DownloadChannelsTask().execute();
+	                         myChannels.clear();
+	                         getMyChannles();
+	                         if(isOnline()){
+	                        	 new DownloadChannelsTask().execute();
+	                         }else{
+	                        	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show(); 
+	                         }
                        	 break;
                         case 4: //My Channels
                         	channelArea = 5;
@@ -128,20 +168,54 @@ public class MainActivity extends SherlockActivity {
             ab.setSelectedNavigationItem(0);
          }else if(systemLanguage.equals("日本語")){
             ab.setSelectedNavigationItem(1);	
-         }else if(systemLanguage.equals("한국의")){
+         }else if(systemLanguage.equals("한국어")){
             ab.setSelectedNavigationItem(2);
          }else{
             ab.setSelectedNavigationItem(3);
          }
         
-//        channelArea = 1;
-//        new DownloadChannelsTask().execute();
+//        setRattingDialog();
+//
+//        if(openTimes == 7){
+//			openTimes = 0;
+//			rattingDialog.show();
+//		}
 
     }
     
 
     
-    @Override
+//    private void setRattingDialog() {
+//		// TODO Auto-generated method stub
+//    	rattingDialog = new AlertDialog.Builder(this).setTitle("Play Store評分")
+//				.setIcon(R.drawable.play_store_icon)
+//				.setMessage("嗨, \n給我們一些鼓勵, \n感謝您!")
+//				.setPositiveButton("不再提醒", new DialogInterface.OnClickListener() {
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//						openTimes = 999;
+//					}
+//				})
+//				.setNeutralButton("稍後提醒", new DialogInterface.OnClickListener() {
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//						dialog.cancel();
+//					}
+//				})
+//				.setNegativeButton("前往", new DialogInterface.OnClickListener() {
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//						openTimes = 999;
+//						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.taiwan.realtime.news"));
+//						startActivity(browserIntent);
+//					}
+//				});
+//		
+//	}
+
+
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		closeDatabase();
@@ -317,6 +391,49 @@ public class MainActivity extends SherlockActivity {
 	    	 search = (EditText) item.getActionView();
              search.addTextChangedListener(filterTextWatcher);
 	    	break;
+	    case R.id.menu_refresh:
+	    	if(channelArea>0 && channelArea<5){
+	            myChannels.clear();
+	            getMyChannles();
+	            if(isOnline()){
+	           	 new DownloadChannelsTask().execute();
+	            }else{
+	           	 Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+	            }
+	    	}else if(channelArea == 0){
+	    		myVideos.clear();
+            	getMyVideos();
+            	setListVideo(myVideos); 
+	    	}else if(channelArea == 5){
+	    		myChannels.clear();
+            	getMyChannles();
+            	setListUI(myChannels);
+	    	}
+	    	break;
+	    case R.id.menu_recommand:
+	    	final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+	    	/* Fill it with Data */
+	    	emailIntent.setType("plain/text");
+	    	emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"brotherkos@gmail.com"});
+	    	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Recommand Channel from Music Channel");
+	    	emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+
+	    	/* Send it off to the Activity-Chooser */
+	    	startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+	    	break;
+	    case R.id.menu_contact:
+	    	final Intent contactIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+	    	/* Fill it with Data */
+	    	contactIntent.setType("plain/text");
+	    	contactIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"brotherkos@gmail.com"});
+	    	contactIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Contact Us from Music Channel");
+	    	contactIntent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+
+	    	/* Send it off to the Activity-Chooser */
+	    	startActivity(Intent.createChooser(contactIntent, "Send mail..."));
+	    	break;
 	    }
 	    return true;
 	}
@@ -328,7 +445,7 @@ public class MainActivity extends SherlockActivity {
             // TODO Auto-generated method stub
             super.onPreExecute();
             
-            	progressDialog = ProgressDialog.show(MainActivity.this, "", "Loading, please wait...");
+            	progressDialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.downloading));
             	progressDialog.setCancelable(true);
 
         }
@@ -347,7 +464,11 @@ public class MainActivity extends SherlockActivity {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
             progressDialog.dismiss();
-            setListUI(theChannels);
+            if(theChannels!=null){
+             setListUI(theChannels);
+            }else{
+            	Toast.makeText(MainActivity.this, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -402,8 +523,8 @@ public class MainActivity extends SherlockActivity {
     
     @Override
     public void  onBackPressed  () {  
-			finishDialog = new AlertDialog.Builder(this).setTitle("Leaving")
-					.setMessage("Leaving Music Channel?")
+			finishDialog = new AlertDialog.Builder(this).setTitle(getResources().getString(R.string.close))
+					.setMessage(getResources().getString(R.string.leave))
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -419,5 +540,15 @@ public class MainActivity extends SherlockActivity {
 					});
 			finishDialog.show();          
     }
+    
+    public boolean isOnline() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	        return true;
+	    }
+	    return false;
+	}
     
 }

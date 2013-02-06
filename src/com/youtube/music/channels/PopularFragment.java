@@ -113,7 +113,7 @@ public final class PopularFragment extends Fragment {
           	  }
             }else{
           	  ListNothingAdapter nothingAdapter = new ListNothingAdapter(getActivity());
-          	     myList.setAdapter(nothingAdapter);
+          	  myList.setAdapter(nothingAdapter);
             }
 
         }

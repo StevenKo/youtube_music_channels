@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListNothingAdapter extends BaseAdapter {
     
@@ -40,7 +41,8 @@ public class ListNothingAdapter extends BaseAdapter {
         View vi=convertView;
         if(convertView==null)
             vi = inflater.inflate(R.layout.item_nothing, null);
-	        TextView text=(TextView)vi.findViewById(R.id.text_no_data);;
+	        TextView text=(TextView)vi.findViewById(R.id.text_no_data);
+	        text.setText(activity.getResources().getString(R.string.no_data));
         return vi;
     }
 }

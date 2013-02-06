@@ -148,7 +148,7 @@ public class ListChannelAdapter extends BaseAdapter {
             	
                 if(checkBox.isChecked()){
 //                	buttonView.setChecked(true);
-//                	Toast.makeText(activity, "tt", Toast.LENGTH_SHORT).show();
+                	Toast.makeText(activity, activity.getResources().getString(R.string.add_my_channel), Toast.LENGTH_SHORT).show();
                 	// Add to db
                 	SQLiteDatabase db = myDBHelper.getWritableDatabase();
                 	ContentValues values = new ContentValues();
@@ -161,6 +161,7 @@ public class ListChannelAdapter extends BaseAdapter {
                 }else{
 //                    buttonView.setChecked(false);
                 	// Delete from db
+                	Toast.makeText(activity, activity.getResources().getString(R.string.remove_my_channel), Toast.LENGTH_SHORT).show();
                 	SQLiteDatabase db = myDBHelper.getWritableDatabase();
                 	db.delete(TABLE_NAME, ID + "=" + data.get(position).getId(), null);
                 }

@@ -158,6 +158,7 @@ public class ListMyVideoAdapter extends BaseAdapter {
             	
                 if(checkBox.isChecked()){
                 	// Add to db
+                	Toast.makeText(activity, activity.getResources().getString(R.string.add_my_video), Toast.LENGTH_SHORT).show();
                 	SQLiteDatabase db = myVideoDBHelper.getWritableDatabase();
                 	ContentValues values = new ContentValues();
                 	values.put(VIDEO_BELONGO_CHANNEL, mChannelInt);
@@ -172,6 +173,7 @@ public class ListMyVideoAdapter extends BaseAdapter {
                 	db.insert(VIDEO_TABLE_NAME, null, values);
                 }else{
                 	// Delete from db
+                	Toast.makeText(activity, activity.getResources().getString(R.string.remove_my_video), Toast.LENGTH_SHORT).show();
                 	SQLiteDatabase db = myVideoDBHelper.getWritableDatabase();
                 	db.delete(VIDEO_TABLE_NAME, _ID + "=" + focusVideo.getId(), null);
                 }

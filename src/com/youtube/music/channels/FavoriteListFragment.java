@@ -84,13 +84,17 @@ public class FavoriteListFragment extends ListFragment {
             	  }
               }
         	  
+             try{ 
               if(myChannelVideo.size()!=0){
             	  ListMyVideoAdapter myListAdapter = new ListMyVideoAdapter(getActivity(), myChannelVideo,myChannelVideo,channelId);
     	          setListAdapter(myListAdapter);        	  
               }else{
             	  ListNothingAdapter nothingAdapter = new ListNothingAdapter(getActivity());
         		  setListAdapter(nothingAdapter);
-              }            
+              }
+             }catch(Exception e){
+            	 
+             }
 	          
           }
 

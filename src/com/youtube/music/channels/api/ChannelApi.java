@@ -138,10 +138,22 @@ public class ChannelApi {
                     String link = videoArray.getJSONObject(i).getJSONArray("link").getJSONObject(0).getString("href");
                     String thumbnail = videoArray.getJSONObject(i).getJSONObject("media$group").getJSONArray("media$thumbnail").getJSONObject(0)
                             .getString("url");
-                    int duration = videoArray.getJSONObject(i).getJSONObject("media$group").getJSONObject("yt$duration").getInt("seconds");
-                    int viewCount = videoArray.getJSONObject(i).getJSONObject("yt$statistics").getInt("viewCount");
-                    int dislikes = videoArray.getJSONObject(i).getJSONObject("yt$rating").getInt("numLikes");
-                    int likes = videoArray.getJSONObject(i).getJSONObject("yt$rating").getInt("numDislikes");
+                    int duration = 0;
+                    int viewCount = 0;
+                    try{
+                        duration = videoArray.getJSONObject(i).getJSONObject("media$group").getJSONObject("yt$duration").getInt("seconds");
+                        viewCount = videoArray.getJSONObject(i).getJSONObject("yt$statistics").getInt("viewCount");
+                    }catch(Exception e){
+                    	
+                    }
+                    int dislikes = 0;
+                    int likes = 0;
+                    try{
+                    	dislikes= videoArray.getJSONObject(i).getJSONObject("yt$rating").getInt("numDislikes");
+                    	likes= videoArray.getJSONObject(i).getJSONObject("yt$rating").getInt("numLikes");
+                    }catch(Exception e){
+                    	
+                    }
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                     Date uploadTime = null;
                     try {

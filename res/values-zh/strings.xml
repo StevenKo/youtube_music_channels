@@ -4,20 +4,28 @@
     <string name="application_name">Music Channel</string>
     <string name="hello_world">WhatsWrong!</string>
     <string name="menu_settings">Settings</string>
-    <string name="app_name">Music Channel</string>
+    <string name="app_name">音樂頻道</string>
     
     <!-- Used in Code -->
     <string name="likes">喜歡</string>
     <string name="time">長度</string>
     <string name="views">觀看次數</string>
     <string name="launch">發佈時間</string>
-    
+    <string name="no_net">無網路連線</string>
+    <string name="downloading">下載中,請稍候....</string>
+    <string name="close">結束執行</string>
+    <string name="leave">離開音樂頻道?</string>
+    <string name="no_data">無資料</string>
+    <string name="add_my_channel">已加至我的頻道</string>
+    <string name="remove_my_channel">已從我的頻道移除</string>
+    <string name="add_my_video">已加至我的影片</string>
+    <string name="remove_my_video">已從我的影片移除</string>
     
     
     <!-- Used by action bar -->
-    <string name="action_label_refresh">Refresh</string>
-    <string name="action_label_recommand">Recommand Channel</string>
-    <string name="action_label_contact">Contact Us</string>
+    <string name="action_label_refresh">重新整理</string>
+    <string name="action_label_recommand">推薦頻道</string>
+    <string name="action_label_contact">聯絡我們</string>
     <string name="action_label_search">Search</string>
     <string name="action_label_both">Both</string>
     <string name="action_label_text">Text</string>   

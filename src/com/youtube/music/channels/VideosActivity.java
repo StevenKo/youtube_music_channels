@@ -53,7 +53,7 @@ public class VideosActivity extends SherlockFragmentActivity {
 		setContentView(R.layout.simple_tabs);
         
 		openDatabase();
-//		getMyVideos();
+		getMyVideos();
 		
 		final ActionBar ab = getSupportActionBar();		     
         mBundle = this.getIntent().getExtras();
@@ -174,6 +174,14 @@ public class VideosActivity extends SherlockFragmentActivity {
     	return cursor;
     }
 	
+	 @Override
+		protected void onDestroy() {
+			super.onDestroy();
+			closeDatabase();
+		}
 	
+	 private void closeDatabase(){
+			mDbVideoHelper.close();
+	}
 
 }
